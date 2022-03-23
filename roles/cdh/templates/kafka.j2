@@ -1,0 +1,20 @@
+{
+    "refName" : "KAFKA-1",
+    "serviceType" : "KAFKA",
+    "serviceConfigs" : [ {
+      "name" : "kerberos.auth.enable",
+      "value" : "true"
+    }, {
+      "name" : "zookeeper_service",
+      "ref" : "ZOOKEEPER-1"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "KAFKA-1-KAFKA_BROKER-BASE",
+      "roleType" : "KAFKA_BROKER",
+      "configs" : [ {
+        "name" : "broker_max_heap_size",
+        "value" : "512"
+      } ],
+      "base" : true
+    } ]
+  }

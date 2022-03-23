@@ -1,0 +1,73 @@
+---
+
+- name: Get Cloudera Manager API version
+  uri:
+    url: http://{{ hostvars[scm_hostname]['inventory_hostname'] }}:{{ scm_port }}/api/version
+    method: GET
+    status_code: 200
+    user: "{{ scm_default_user }}"
+    password: "{{ scm_default_pass }}"
+    force_basic_auth: yes
+    return_content: yes
+  register: result
+
+# Set base CM API URL
+- set_fact:
+    cm_api_url: "http://{{ hostvars[scm_hostname]['inventory_hostname'] }}:{{ scm_port }}/api/{{ result.content }}"
+
+- debug:
+    var: cm_api_url
+    verbosity: 0
+
+# Trigger handler to wait for SCM to startup
+- meta: flush_handlers
+
+- name: Auto TLS enable generateCmca
+  uri:
+    url: "{{ cm_api_url }}/cm/commands/generateCmca"
+    method: POST
+    status_code: 200
+    force_basic_auth: yes
+    user: "{{ scm_default_user }}"
+    password: "{{ scm_default_pass }}"
+    return_content: yes
+    body_format : json
+    body: { "sshPort" : 22, "userName" : "root", "password" : "cloudera" }
+  register: start_resp1
+  failed_when: "'startTime' not in start_resp1.content"
+
+- name: Auto TLS enable ConfigureAutoTlsServices
+  uri:
+    url: "{{ cm_api_url }}/clusters/{{ cluster_display_name }}/commands/configureAutoTlsServices"
+    method: POST
+    status_code: 200
+    force_basic_auth: yes
+    user: "{{ scm_default_user }}"
+    password: "{{ scm_default_pass }}"
+    return_content: yes
+    body_format : json
+    body: { "sshPort" : 22, "userName" : "root", "password" : "cloudera" }
+  register: start_resp2
+  failed_when: "'startTime' not in start_resp2.content"
+  notify:
+    - restart cloudera-scm-server
+
+- name: Start the Cloudera Manager Server
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  notify:
+    - wait cloudera-scm-server
+  with_items:
+    - cloudera-scm-server
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- debug:
+    var: start_resp1
+    verbosity: 1
+- debug:
+    var: start_resp2
+    verbosity: 1

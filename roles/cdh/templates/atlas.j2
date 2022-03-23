@@ -1,0 +1,25 @@
+{
+    "refName" : "ATLAS-1",
+    "serviceType" : "ATLAS",
+    "serviceConfigs" : [ {
+      "name" : "solr_service",
+      "ref" : "SOLR-1"
+    }, {
+      "name" : "kafka_service",
+      "ref" : "KAFKA-1"
+    }, {
+      "name" : "hbase_service",
+      "ref" : "HBASE-1"
+    }, {
+      "name" : "kerberos.auth.enable",
+      "value" : "true"
+    }, {
+      "name" : "hdfs_service",
+      "ref" : "HDFS-1"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "ATLAS-1-ATLAS_SERVER-BASE",
+      "roleType" : "ATLAS_SERVER",
+      "base" : true
+    } ]
+  }

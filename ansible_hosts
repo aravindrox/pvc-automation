@@ -1,0 +1,35 @@
+[scm_server]
+aswar-1.vpc.cloudera.com
+
+[db_server]
+aswar-1.vpc.cloudera.com
+
+[krb5_server]
+aswar-1.vpc.cloudera.com
+
+[utility_servers:children]
+scm_server
+db_server
+krb5_server
+
+[edge_servers]
+aswar-1.vpc.cloudera.com        host_template=HostTemplate-Edge role_ref_names=HDFS-HTTPFS-1
+
+[master_servers]
+aswar-2.vpc.cloudera.com        host_template=HostTemplate-Master1
+aswar-3.vpc.cloudera.com        host_template=HostTemplate-Master2
+aswar-4.vpc.cloudera.com        host_template=HostTemplate-Master3
+
+[worker_servers]
+aswar-5.vpc.cloudera.com
+aswar-6.vpc.cloudera.com
+aswar-7.vpc.cloudera.com
+
+[worker_servers:vars]
+host_template=HostTemplate-Workers
+
+[cdh_servers:children]
+utility_servers
+edge_servers
+master_servers
+worker_servers

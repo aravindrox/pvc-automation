@@ -1,0 +1,50 @@
+---
+
+- name: Create databases
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ item.value.name }}"
+    state: present
+    encoding: utf8
+  with_dict: "{{ databases }}"
+
+- name: Create database users
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ item.value.user }}"
+    password: "{{ item.value.pass }}"
+    update_password: always
+    priv: "{{ item.value.name }}.*:ALL"
+    host: "%"
+    state: present
+  with_dict: "{{ databases }}"
+
+- name: log_bin_trust_function_creators
+  mysql_variables:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      variable: log_bin_trust_function_creators
+      value: "1"
+      
+- name: FOREIGN_KEY_CHECKS
+  mysql_variables:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"      
+      variable: foreign_key_checks
+      value: "0"
+
+- name: innodb_large_prefix
+  mysql_variables:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      variable: innodb_large_prefix
+      value: "1"
+
+- name: global innodb_file_format
+  mysql_variables:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      variable: innodb_file_format
+      value: Barracuda
