@@ -60,7 +60,7 @@ cluster_version_cm_minor: "{{ cluster_version_cm.split('.')[1] }}"
 
 cloudera_archive_protocol: https://
 cloudera_archive: archive.cloudera.com
-cloudera_archive_authn: 240c0bfa-495a-4ac7-af8c-b7ba96855098:ac93b59fd7ff
+cloudera_archive_authn: changeme:changeme
 
 configs_by_version:
   "5":
